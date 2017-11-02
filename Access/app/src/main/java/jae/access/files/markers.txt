@@ -1,0 +1,8 @@
+[
+    {
+        "lat": 38.378756,
+        "lng": -78.971553,
+        "address": "402 E College St, Bridgewater, VA 22812",
+        "desc": "Kline Campus Center"
+    }
+]
