@@ -95,6 +95,7 @@ public class MapsActivity extends FragmentActivity {
                                         defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).
                                 title(newAdd).snippet(newDesc));
                     }
+                    setUpMap(jArray);
                 }
             }
             catch(JSONException e){
@@ -281,7 +282,7 @@ public class MapsActivity extends FragmentActivity {
 
     }
 
-    private void setUpMap() {
+    private void setUpMap(JSONArray jArray) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -301,10 +302,35 @@ public class MapsActivity extends FragmentActivity {
 
         //Load Markers through for(loop) with if(
 
+        Double newLat = null;
+        Double newLng = null;
+        String newAdd = "";
+        String newDesc = "";
+            for(int loop=0; loop < jArray.length(); loop++) {
+                try {
+                    JSONObject jObject = jArray.getJSONObject(loop);
+                    newLat = jObject.getDouble("lat");
+                    newLng = jObject.getDouble("lng");
+                    newAdd = jObject.getString("address");
+                    newDesc = jObject.getString("desc");
+                    LatLng newLoc = new LatLng(newLat, newLng);
+                    System.out.println(newLoc);
+                    if (bounds.contains(newLoc)) {
+                        //System.out.println(newLoc + " Bounds contains this marker");
+                        mMap.addMarker(new MarkerOptions().position(newLoc).
+                                icon(BitmapDescriptorFactory.
+                                        defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).
+                                title(newAdd).snippet(newDesc));
+                    }
+                }
+                catch(JSONException e){
+                    e.printStackTrace();
+                }
+            }
+
         mMap.setMyLocationEnabled(true);
         float zoomLevel = 16;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
-
     }
 
     private LatLngBounds getNearbyMarkers(double lat, double longi){
