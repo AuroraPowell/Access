@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -53,6 +54,7 @@ public class MapsActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
+
 
         FileOutputStream fos = null;
         if(!(new File(getFilesDir() + "/" + FILENAME).exists())){
@@ -289,12 +291,28 @@ public class MapsActivity extends FragmentActivity {
         locationCt = locationManagerCt
                 .getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
+        double tempLat = locationCt.getLatitude();
+        double tempLong = locationCt.getLongitude();
+
         LatLng latLng = new LatLng(locationCt.getLatitude(),
                 locationCt.getLongitude());
 
+        LatLngBounds bounds = getNearbyMarkers(tempLat, tempLong);
+
+        //Load Markers through for(loop) with if(
 
         mMap.setMyLocationEnabled(true);
         float zoomLevel = 16;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel));
+
+    }
+
+    private LatLngBounds getNearbyMarkers(double lat, double longi){
+        LatLng lowerBounds = new LatLng(lat - 0.004, longi - 0.004);
+        LatLng upperBounds = new LatLng(lat + 0.004, longi + 0.004);
+
+        LatLngBounds perimeter = new LatLngBounds(lowerBounds, upperBounds);
+
+        return perimeter;
     }
 }
